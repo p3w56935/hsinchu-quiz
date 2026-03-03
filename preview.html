@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>新竹 Fun Fact O/X 測驗</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111a2e;
+      --muted:#9fb0d0;
+      --text:#e9f0ff;
+      --accent:#6aa7ff;
+      --good:#27d17f;
+      --bad:#ff5d6c;
+      --line:#223257;
+      --chip:#172443;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(1000px 600px at 10% 0%, #12224a 0%, var(--bg) 60%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:min(920px, 100%);}
+    header{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+    h1{font-size:22px; margin:0; letter-spacing:.5px}
+    .sub{color:var(--muted); font-size:13px; line-height:1.5; margin-top:6px}
+    .toolbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, #15254a, #0f1b35);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+      cursor:pointer;
+      transition:.15s transform, .15s opacity, .15s border-color;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:#34549a}
+    .btn:active{transform:translateY(0px); opacity:.9}
+    .btn.secondary{
+      background:transparent;
+    }
+    .toggle{
+      display:flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(17,26,46,.6);
+      font-size:14px;
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+    }
+    .toggle input{accent-color: var(--accent); transform:scale(1.1)}
+    .card{
+      background:linear-gradient(180deg, rgba(17,26,46,.98), rgba(14,21,40,.98));
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .topbar{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .meta{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      color:var(--muted); font-size:13px;
+    }
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      color:var(--muted);
+    }
+    .progress{
+      height:10px;
+      background:#0d1730;
+      border:1px solid var(--line);
+      border-radius:999px;
+      overflow:hidden;
+      flex:1;
+      min-width:160px;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--accent), #9b7bff);
+      transition: width .25s ease;
+    }
+    .body{
+      padding:18px 16px 16px;
+    }
+    .qno{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .question{
+      font-size:18px;
+      line-height:1.55;
+      margin:0 0 14px 0;
+    }
+    .choices{
+      display:flex;
+      gap:12px;
+      margin:10px 0 8px;
+      flex-wrap:wrap;
+    }
+    .choice{
+      flex:1;
+      min-width:140px;
+      padding:14px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(11,18,32,.55);
+      cursor:pointer;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      transition:.15s transform, .15s border-color, .15s background;
+      user-select:none;
+    }
+    .choice:hover{transform:translateY(-1px); border-color:#34549a}
+    .choice.selected{
+      border-color: rgba(106,167,255,.9);
+      background: rgba(106,167,255,.12);
+    }
+    .pill{
+      width:34px; height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      background:#0d1730;
+      color:var(--text);
+      font-weight:700;
+    }
+    .nav{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .nav .left, .nav .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .hint{color:var(--muted); font-size:13px}
+    .footer{
+      padding:14px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .result{
+      padding:16px;
+      border-top:1px solid var(--line);
+      display:none;
+    }
+    .scoreline{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .big{
+      font-size:22px;
+      font-weight:800;
+    }
+    .summary{color:var(--muted); font-size:13px}
+    .review{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:rgba(11,18,32,.45);
+    }
+    .item .row1{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:6px;
+    }
+    .tag{
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(23,36,67,.6);
+      white-space:nowrap;
+    }
+    .tag.good{border-color:rgba(39,209,127,.4); color:#b7ffd8; background:rgba(39,209,127,.12)}
+    .tag.bad{border-color:rgba(255,93,108,.35); color:#ffd1d6; background:rgba(255,93,108,.10)}
+    .answerline{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      border:1px solid var(--line);
+      border-bottom-width:2px;
+      padding:2px 6px;
+      border-radius:8px;
+      background:#0d1730;
+      color:var(--text);
+    }
+    @media (max-width:520px){
+      .question{font-size:17px}
+      .choice{min-width:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>新竹 Fun Fact O/X 測驗</h1>
+        <div class="sub">
+          25 題 O/X｜支援鍵盤：<span class="kbd">O</span> / <span class="kbd">X</span>，上一題 <span class="kbd">←</span>，下一題 <span class="kbd">→</span>，送出 <span class="kbd">Enter</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <label class="toggle" title="打亂題目順序">
+          <input id="shuffleToggle" type="checkbox" />
+          打亂題目
+        </label>
+        <button class="btn secondary" id="resetBtn">重作</button>
+      </div>
+    </header>
+
+    <section class="card" aria-live="polite">
+      <div class="topbar">
+        <div class="meta">
+          <span class="chip" id="modeChip">模式：依原順序</span>
+          <span class="chip" id="answeredChip">已作答：0 / 25</span>
+        </div>
+        <div class="progress" aria-label="進度條">
+          <div class="bar" id="progressBar"></div>
+        </div>
+        <div class="meta">
+          <span class="chip" id="posChip">第 1 / 25 題</span>
+        </div>
+      </div>
+
+      <div class="body" id="quizBody">
+        <div class="qno" id="qno">題目 1</div>
+        <p class="question" id="questionText"></p>
+
+        <div class="choices" role="group" aria-label="O/X 作答">
+          <div class="choice" id="choiceO" data-val="O" tabindex="0" aria-label="選擇 O">
+            <div class="pill">O</div>
+            <div>
+              <div style="font-weight:700;">正確</div>
+              <div style="color:var(--muted); font-size:13px;">這句是對的</div>
+            </div>
+          </div>
+          <div class="choice" id="choiceX" data-val="X" tabindex="0" aria-label="選擇 X">
+            <div class="pill">X</div>
+            <div>
+              <div style="font-weight:700;">錯誤</div>
+              <div style="color:var(--muted); font-size:13px;">這句是錯的</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <div class="left">
+            <button class="btn secondary" id="prevBtn">← 上一題</button>
+            <button class="btn secondary" id="nextBtn">下一題 →</button>
+          </div>
+          <div class="right">
+            <div class="hint" id="hintText">提示：你可以先全部作答，再按「送出」看解析。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="hint" id="statusText">尚未送出</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn secondary" id="jumpFirstBtn">回到第一題</button>
+          <button class="btn" id="submitBtn">送出並看結果</button>
+        </div>
+      </div>
+
+      <div class="result" id="resultPanel">
+        <div class="scoreline">
+          <div>
+            <div class="big" id="scoreBig">得分：0 / 25</div>
+            <div class="summary" id="scoreSummary"></div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn secondary" id="reviewToggleBtn">展開/收合解析</button>
+            <button class="btn" id="retryBtn">再玩一次</button>
+          </div>
+        </div>
+        <div class="review" id="reviewList"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ===== 題庫（依你提供的 O/X）=====
+    const ORIGINAL_QUESTIONS = [
+      { id: 1,  text: "(X) 新竹最北邊是竹北最南邊是竹南", answer: "X" },
+      { id: 2,  text: "(X) 南寮屬於新竹市南區", answer: "X" },
+      { id: 3,  text: "(O) 新竹動物園是全台現存最悠久的動物園", answer: "O" },
+      { id: 4,  text: "(X) 鴨香飯是新竹有百年歷史的美食", answer: "X" },
+      { id: 5,  text: "(O) 當初開闢內灣線的目的是運煤礦", answer: "O" },
+      { id: 6,  text: "(O) 新竹米粉好吃的原因是風很大", answer: "O" },
+      { id: 7,  text: "(X) 位於尖石鄉的神仙谷是賽德克巴萊拍攝的場景", answer: "X" },
+      { id: 8,  text: "(X) 其實小人國和六福村都是桃園的", answer: "X" },
+      { id: 9,  text: "(O) 高虹安曾經在鴻海上班，鄭朝方當過歌手", answer: "O" },
+      { id: 10, text: "(O) 五峰鄉和尖石鄉的原住民主要是泰雅族", answer: "O" },
+      { id: 11, text: "(O) 吊車大王在竹北的房子叫做羅浮宮、寶山新蓋的廠叫白宮", answer: "O" },
+      { id: 12, text: "(X) 台元科技園區是中央主辦開發的", answer: "X" },
+      { id: 13, text: "(O) 南寮漁港和新竹漁港是指同一個地方", answer: "O" },
+      { id: 14, text: "(X) 台1線連接竹北和新竹市的橋叫中華橋", answer: "X" },
+      { id: 15, text: "(X) 新竹城隍廟是鄭成功治台期間建的", answer: "X" },
+      { id: 16, text: "(X) 攻城獅是新竹的棒球隊", answer: "X" },
+      { id: 17, text: "(O) 不算園區和學校裡面，新竹的麥當勞超過15家", answer: "O" },
+      { id: 18, text: "(O) 金山雞腿飯飯和金仙蝦捲飯是同一個老闆", answer: "O" },
+      { id: 19, text: "(X) 交大和陽明合併之後叫做「國立陽明交通大學」；清大和竹教大合併之後全稱叫做「國立清華教育大學」", answer: "X" },
+      { id: 20, text: "(O) 新竹貢丸早期不是豬肉做的是用魚漿做的", answer: "O" },
+      { id: 21, text: "(X) 新竹的平均風速居全台之冠", answer: "X" },
+      { id: 22, text: "(O) 公道五路的「五」是都市計畫編號", answer: "O" },
+      { id: 23, text: "(O) 擂茶原本用途是一種高熱量主食", answer: "O" },
+      { id: 24, text: "(O) 高鐵通車至今還不到20年", answer: "O" },
+      { id: 25, text: "(O) 竹科設立是參考美國矽谷", answer: "O" },
+    ];
+
+    // ===== 狀態 =====
+    let questions = [];
+    let idx = 0;
+    let answers = new Map(); // key: question.id, value: "O"/"X"
+    let submitted = false;
+    let reviewExpanded = true;
+
+    // ===== DOM =====
+    const modeChip = document.getElementById("modeChip");
+    const answeredChip = document.getElementById("answeredChip");
+    const posChip = document.getElementById("posChip");
+    const progressBar = document.getElementById("progressBar");
+
+    const qno = document.getElementById("qno");
+    const questionText = document.getElementById("questionText");
+
+    const choiceO = document.getElementById("choiceO");
+    const choiceX = document.getElementById("choiceX");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const jumpFirstBtn = document.getElementById("jumpFirstBtn");
+    const shuffleToggle = document.getElementById("shuffleToggle");
+
+    const statusText = document.getElementById("statusText");
+    const resultPanel = document.getElementById("resultPanel");
+    const scoreBig = document.getElementById("scoreBig");
+    const scoreSummary = document.getElementById("scoreSummary");
+    const reviewList = document.getElementById("reviewList");
+    const reviewToggleBtn = document.getElementById("reviewToggleBtn");
+
+    function cloneQuestions(){
+      return ORIGINAL_QUESTIONS.map(q => ({...q}));
+    }
+
+    function shuffleArray(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function init(){
+      submitted = false;
+      idx = 0;
+      answers = new Map();
+      questions = cloneQuestions();
+      if (shuffleToggle.checked) shuffleArray(questions);
+
+      modeChip.textContent = shuffleToggle.checked ? "模式：已打亂" : "模式：依原順序";
+      statusText.textContent = "尚未送出";
+      resultPanel.style.display = "none";
+      reviewList.innerHTML = "";
+      render();
+    }
+
+    function current(){
+      return questions[idx];
+    }
+
+    function answeredCount(){
+      return answers.size;
+    }
+
+    function setSelectedUI(){
+      const q = current();
+      const a = answers.get(q.id);
+
+      choiceO.classList.toggle("selected", a === "O");
+      choiceX.classList.toggle("selected", a === "X");
+    }
+
+    function render(){
+      const q = current();
+      qno.textContent = `題目 ${idx + 1}（原題號：${q.id}）`;
+      questionText.textContent = q.text.replace(/^\([OX]\)\s*/, ""); // 把你原本括號答案先拿掉，避免偷看到
+      setSelectedUI();
+
+      const total = questions.length;
+      answeredChip.textContent = `已作答：${answeredCount()} / ${total}`;
+      posChip.textContent = `第 ${idx + 1} / ${total} 題`;
+      progressBar.style.width = `${(idx + 1) / total * 100}%`;
+
+      prevBtn.disabled = (idx === 0);
+      nextBtn.disabled = (idx === total - 1);
+      submitBtn.disabled = submitted;
+
+      if (!submitted){
+        statusText.textContent = answeredCount() === total
+          ? "已全部作答，可以送出！"
+          : `尚未送出（還差 ${total - answeredCount()} 題）`;
+      }
+    }
+
+    function answer(val){
+      if (submitted) return;
+      const q = current();
+      answers.set(q.id, val);
+      setSelectedUI();
+      render();
+    }
+
+    function go(delta){
+      const total = questions.length;
+      idx = Math.min(total - 1, Math.max(0, idx + delta));
+      render();
+    }
+
+    function submit(){
+      if (submitted) return;
+      submitted = true;
+
+      const total = questions.length;
+      let correct = 0;
+
+      // 建立解析清單
+      const items = questions.map((q, i) => {
+        const user = answers.get(q.id) ?? "未作答";
+        const ok = user === q.answer;
+        if (ok) correct++;
+
+        return { q, i, user, ok };
+      });
+
+      scoreBig.textContent = `得分：${correct} / ${total}`;
+      const pct = Math.round((correct / total) * 100);
+      const missed = total - correct;
+
+      scoreSummary.textContent =
+        `正確率 ${pct}%｜答錯 ${missed} 題｜未作答 ${total - answeredCount()} 題`;
+
+      // Render review
+      reviewList.innerHTML = items.map(({q, i, user, ok}) => {
+        const userTxt = user === "未作答" ? "未作答" : user;
+        const okTag = ok ? `<span class="tag good">✅ 正確</span>` : `<span class="tag bad">❌ 錯誤</span>`;
+        return `
+          <div class="item">
+            <div class="row1">
+              <div style="font-weight:800;">第 ${i + 1} 題（原題號：${q.id}）</div>
+              ${okTag}
+            </div>
+            <div style="margin:6px 0 8px; line-height:1.55;">${escapeHtml(q.text.replace(/^\([OX]\)\s*/, ""))}</div>
+            <div class="answerline">你的答案：<b>${escapeHtml(userTxt)}</b>　｜　正確答案：<b>${q.answer}</b></div>
+          </div>
+        `;
+      }).join("");
+
+      resultPanel.style.display = "block";
+      statusText.textContent = "已送出（下方可看逐題解析）";
+      submitBtn.disabled = true;
+
+      // 送出後：把目前題目的選取也鎖住（視覺上不變）
+      setSelectedUI();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ===== Events =====
+    choiceO.addEventListener("click", () => answer("O"));
+    choiceX.addEventListener("click", () => answer("X"));
+
+    prevBtn.addEventListener("click", () => go(-1));
+    nextBtn.addEventListener("click", () => go(+1));
+
+    submitBtn.addEventListener("click", submit);
+
+    resetBtn.addEventListener("click", () => {
+      shuffleToggle.checked = false;
+      init();
+    });
+
+    retryBtn.addEventListener("click", init);
+
+    jumpFirstBtn.addEventListener("click", () => {
+      idx = 0;
+      render();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    shuffleToggle.addEventListener("change", () => init());
+
+    reviewToggleBtn.addEventListener("click", () => {
+      reviewExpanded = !reviewExpanded;
+      reviewList.style.display = reviewExpanded ? "grid" : "none";
+    });
+
+    // 鍵盤操作：O / X / ← / → / Enter
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "o" || e.key === "O") answer("O");
+      if (e.key === "x" || e.key === "X") answer("X");
+      if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight") go(+1);
+      if (e.key === "Enter") submit();
+    });
+
+    // init
+    init();
+  </script>
+</body>
+</html>
